@@ -19,7 +19,7 @@ def index(request):
         Post.objects
         .filter(is_published__exact=True,
                 category__is_published__exact=True,
-                created_at__lte=timezone.now())
+                pub_date__lte=timezone.now())
         .order_by('-created_at')
         .all()[:5]
     )
@@ -34,7 +34,7 @@ def post_detail(request, id):
         post = Post.objects.get(pk=id,
                                 is_published=True,
                                 category__is_published=True,
-                                created_at__lte=timezone.now())
+                                pub_date__lte=timezone.now())
 
     except Post.DoesNotExist:
         raise Http404()
@@ -56,7 +56,7 @@ def category_posts(request, category_slug):
         Post.objects
         .filter(is_published__exact=True,
                 category__pk__exact=category.pk,
-                created_at__lte=timezone.now())
+                pub_date__lte=timezone.now())
         .all()
     )
 
