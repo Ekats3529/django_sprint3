@@ -23,15 +23,13 @@ class Category(PublishedModel, CreatedModel):
     description = models.TextField('Описание')
     slug = models.SlugField('Идентификатор',
                             unique=True,
-                            help_text="Идентификатор страницы для URL;" \
-                            " разрешены символы латиницы, цифры," \
+                            help_text="Идентификатор страницы для URL;"
+                            " разрешены символы латиницы, цифры,"
                             " дефис и подчёркивание.")
-
 
     class Meta:
         verbose_name = 'категория'
         verbose_name_plural = 'Категории'
-
 
     def __str__(self):
         return self.title
@@ -40,10 +38,10 @@ class Category(PublishedModel, CreatedModel):
 class Post(PublishedModel, CreatedModel):
     title = models.CharField('Заголовок', max_length=256)
     text = models.TextField('Текст')
-    pub_date = models.DateTimeField('Дата и время публикации', 
-                                    help_text="Если установить дату и " \
+    pub_date = models.DateTimeField('Дата и время публикации',
+                                    help_text="Если установить дату и "
                                     "время в будущем"
-                                    " — можно делать " \
+                                    " — можно делать "
                                     "отложенные публикации.")
 
     author = models.ForeignKey(
@@ -69,7 +67,6 @@ class Post(PublishedModel, CreatedModel):
     class Meta:
         verbose_name = 'публикация'
         verbose_name_plural = 'Публикации'
-
 
     def __str__(self):
         return self.title

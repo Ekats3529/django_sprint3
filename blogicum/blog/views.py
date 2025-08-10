@@ -31,7 +31,7 @@ def post_detail(request, id):
     template = 'blog/detail.html'
 
     try:
-        post = Post.objects.get(pk=id, 
+        post = Post.objects.get(pk=id,
                                 is_published=True,
                                 category__is_published=True,
                                 created_at__lte=timezone.now())
@@ -46,9 +46,8 @@ def post_detail(request, id):
 def category_posts(request, category_slug):
     template = 'blog/category.html'
     try:
-        category = (Category.objects
-                   .get(slug=category_slug, 
-                        is_published=True))
+        category = (Category.objects.get(slug=category_slug,
+                                         is_published=True))
 
     except Category.DoesNotExist:
         raise Http404()
