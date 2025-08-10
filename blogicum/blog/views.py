@@ -51,7 +51,7 @@ def category_posts(request, category_slug):
 
     except Category.DoesNotExist:
         raise Http404()
-    
+
     post_list = (
         Post.objects
         .filter(is_published__exact=True,
