@@ -1,6 +1,5 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from blog.models import Post, Category
-from django.http import Http404
 from django.utils import timezone
 
 
@@ -12,14 +11,19 @@ empty_post = {
     'text': None,
 }
 
+def get_published_posts():
+    return Post.objects.filter(
+        is_published=True,
+        category__is_published=True,
+        pub_date__lte=timezone.now()
+    )
+
+
 
 def index(request):
     template = 'blog/index.html'
     post_list = (
-        Post.objects
-        .filter(is_published__exact=True,
-                category__is_published__exact=True,
-                pub_date__lte=timezone.now())
+       get_published_posts()
         .order_by('-created_at')
         .all()[:5]
     )
@@ -27,17 +31,13 @@ def index(request):
     return render(request, template, context)
 
 
-def post_detail(request, id):
+def post_detail(request, post_id):
     template = 'blog/detail.html'
 
-    try:
-        post = Post.objects.get(pk=id,
-                                is_published=True,
-                                category__is_published=True,
-                                pub_date__lte=timezone.now())
-
-    except Post.DoesNotExist:
-        raise Http404()
+    post = get_object_or_404(
+        get_published_posts(),
+        pk=post_id
+    )
 
     context = {'post': post}
     return render(request, template, context)
@@ -45,21 +45,21 @@ def post_detail(request, id):
 
 def category_posts(request, category_slug):
     template = 'blog/category.html'
-    try:
-        category = (Category.objects.get(slug=category_slug,
-                                         is_published=True))
 
-    except Category.DoesNotExist:
-        raise Http404()
-
-    post_list = (
-        Post.objects
-        .filter(is_published__exact=True,
-                category__pk__exact=category.pk,
-                pub_date__lte=timezone.now())
-        .all()
+    category = get_object_or_404(
+        Category,
+        slug=category_slug,
+        is_published=True
     )
 
-    context = {'category': category,
-               'post_list': post_list}
+    post_list = (
+        get_published_posts()
+        .filter(category=category)
+    )
+
+    context = {
+        'category': category,
+        'post_list': post_list
+    }
+    
     return render(request, template, context)
